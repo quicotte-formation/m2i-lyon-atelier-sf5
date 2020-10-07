@@ -1,0 +1,11 @@
+<html>
+<body>
+    {{ form(formRecherche) }}
+
+    {% for serie in series %}
+        <div>
+            {{ serie.titre }}
+        </div>
+    {% endfor %}
+</body>
+</html>

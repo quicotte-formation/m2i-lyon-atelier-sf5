@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\DTO\AjoutSerieDTO;
 use App\DTO\FilmEtLiensDTO;
+use App\DTO\RechercheSerieDto;
 use App\Entity\Episode;
 use App\Entity\Film;
 use App\Entity\Lien;
@@ -11,6 +12,7 @@ use App\Entity\Saison;
 use App\Entity\Serie;
 use App\Form\AjoutSerieType;
 use App\Form\FilmEtLiensType;
+use App\Form\RechercheSerieType;
 use App\Form\SerieCompleteType;
 use App\Form\TestType;
 use App\Repository\FilmRepository;
@@ -21,6 +23,43 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FormulaireController extends AbstractController
 {
+    /**
+     * @Route("/recherche-series")
+     */
+    public function rechercheSeries(Request $request, EntityManagerInterface $em){
+        $dto = new RechercheSerieDto();
+        $form=$this->createForm(RechercheSerieType::class , $dto);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted()){
+
+            // Avec querybuilder, rechercher les séries en fonction $dto
+            $qb= $em->createQueryBuilder();
+            $qb->select("s")
+                ->from("App:Serie", "s");
+            if ($dto->getTitre()!=null){
+                $qb->andWhere("s.titre=:TITRE")
+                    ->setParameter("TITRE", $dto->getTitre());
+            }
+            if ($dto->getGenre()!=null){
+                $qb->join("s.genre","g")
+                    ->andWhere("g=:GENRE")
+                    ->setParameter("GENRE", $dto->getGenre());
+            }
+
+            $series = $qb->getQuery()->getResult();
+        }else{
+            $series = [];
+        }
+
+        return $this->render('formulaire/rechercheSerie.html.twig', [
+            'formRecherche'=>$form->createView(),
+            'series'=>$series
+            ]);
+    }
+
+
+
     /**
      * @Route("/ajouterFilmEtLiens")
      */
