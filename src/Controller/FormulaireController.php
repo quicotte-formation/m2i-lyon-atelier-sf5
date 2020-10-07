@@ -3,11 +3,14 @@
 namespace App\Controller;
 
 use App\DTO\AjoutSerieDTO;
+use App\DTO\FilmEtLiensDTO;
 use App\Entity\Episode;
 use App\Entity\Film;
+use App\Entity\Lien;
 use App\Entity\Saison;
 use App\Entity\Serie;
 use App\Form\AjoutSerieType;
+use App\Form\FilmEtLiensType;
 use App\Form\SerieCompleteType;
 use App\Form\TestType;
 use App\Repository\FilmRepository;
@@ -18,6 +21,45 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FormulaireController extends AbstractController
 {
+    /**
+     * @Route("/ajouterFilmEtLiens")
+     */
+    public function ajouterFilmEtLiens(EntityManagerInterface $em, Request $req){
+
+        $dto = new FilmEtLiensDTO();
+        $form = $this->createForm(FilmEtLiensType::class, $dto);
+        $form->handleRequest($req);
+
+        if( $form->isSubmitted() ){
+
+            $film = new Film();
+            $film->setTitre( $dto->getTitre() );
+            $film->setAnneeSortie( $dto->getAnnee() );
+            $film->setDuree( $dto->getDuree() );
+            $film->setGenre( $dto->getGenre() );
+            $film->setPays( $dto->getPays() );
+            $film->setActeurs( $dto->getActeurs() );
+            $film->setRealisateurs( $dto->getRealisateurs() );
+            $em->persist($film);
+
+            for($i=1;$i<=$dto->getNbLiens(); $i++){
+
+                $lien = new Lien();
+                $lien->setUrl( "Lien " . $i );
+                $film->addLien($lien);
+
+                $em->persist($lien);
+            }
+
+            $em->flush();
+
+            return $this->redirectToRoute("film_index");
+
+        }else{
+            return $this->render("formulaire/ajouterSerieComplete.html.twig", ['monForm'=>$form->createView()]);
+        }
+    }
+
     /**
      * @Route("/ajoutSerie")
      */

@@ -68,6 +68,22 @@ class Film
      */
     private $liens;
 
+    /**
+     * @param ArrayCollection $acteurs
+     */
+    public function setActeurs(ArrayCollection $acteurs): void
+    {
+        $this->acteurs = $acteurs;
+    }
+
+    /**
+     * @param ArrayCollection $realisateurs
+     */
+    public function setRealisateurs(ArrayCollection $realisateurs): void
+    {
+        $this->realisateurs = $realisateurs;
+    }
+
     public function __construct()
     {
         $this->acteurs = new ArrayCollection();
