@@ -7,6 +7,7 @@ use App\Entity\Film;
 use App\Form\FilmType;
 use App\Form\RechercheFilmSerieAdminType;
 use App\Repository\FilmRepository;
+use App\Service\JournalisationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,7 +43,7 @@ class FilmController extends AbstractController
     /**
      * @Route("/new", name="film_new", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
+    public function new(Request $request, JournalisationService $service): Response
     {
         $film = new Film();
         $form = $this->createForm(FilmType::class, $film);
@@ -52,6 +53,8 @@ class FilmController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($film);
             $entityManager->flush();
+
+            $service->journaliser( "Ajout d'un nouveau film : " . $film->getTitre() );
 
             return $this->redirectToRoute('film_index');
         }

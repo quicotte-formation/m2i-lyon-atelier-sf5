@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Genre;
 use App\Form\GenreType;
 use App\Repository\GenreRepository;
+use App\Service\JournalisationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +29,7 @@ class GenreController extends AbstractController
     /**
      * @Route("/new", name="genre_new", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
+    public function new(Request $request, JournalisationService $service): Response
     {
         $genre = new Genre();
         $form = $this->createForm(GenreType::class, $genre);
@@ -38,6 +39,8 @@ class GenreController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($genre);
             $entityManager->flush();
+
+            $service->journaliser( "Ajout d'un nouveau genre : " . $genre->getNom() );
 
             return $this->redirectToRoute('genre_index');
         }
