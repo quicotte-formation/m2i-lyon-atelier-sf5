@@ -9,10 +9,12 @@ use App\Repository\FilmRepository;
 class FilmService2
 {
     private $filmRep;
+    private $journalService;
 
-    public function __construct(FilmRepository $rep)
+    public function __construct(FilmRepository $rep, JournalisationService $journalService)
     {
         $this->filmRep = $rep;
+        $this->journalService = $journalService;
     }
 
     /**
@@ -44,6 +46,8 @@ class FilmService2
             // Tts conditions sont ok pour enfants
             $filmsEnfants[] = $film;
         }
+
+        $this->journalService->journaliser("listerFilmsEnfant");
 
         return $filmsEnfants;
     }
