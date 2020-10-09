@@ -1,0 +1,18 @@
+{% extends 'base-visiteur.html.twig' %}
+
+{% block body %}
+    <h2>Detail du film : {{ film.titre }}</h2>
+
+    <h3>Année: {{ film.anneeSortie }}</h3>
+    <h3>Pays: {{ film.pays }}</h3>
+    <h3>Genre: {{ film.genre }}</h3>
+    <h3>Synopsis: {{ film.synopsis }}</h3>
+    <h3>Ralisateurs: {{  film.realisateurs | join(', ') }}</h3>
+    <h3>Acteurs: {{  film.acteurs | join(', ') }}</h3>
+    <h3>Liens: {{ film.liens | join(', ') }}</h3>
+
+    <h3>Realisateurs</h3>
+    {% for real in film.realisateurs %}
+        {{ real.prenom }} {{ real.nom }}
+    {% endfor %}
+{% endblock %}

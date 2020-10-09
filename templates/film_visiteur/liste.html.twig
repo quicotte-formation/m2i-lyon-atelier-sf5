@@ -1,0 +1,12 @@
+{% extends 'base-visiteur.html.twig' %}
+
+{% block body %}
+    <h2>Filtre de recherche</h2>
+    {{ form(formRecherche) }}
+
+    <h2>Films trouvés</h2>
+    {% for film in films %}
+        <a href="{{ path('film-visiteur-detail', {'idFilm': film.id}) }}">{{ film.titre }}</a>
+        <br>
+    {% endfor %}
+{% endblock %}

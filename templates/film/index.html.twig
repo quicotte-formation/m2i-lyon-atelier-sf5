@@ -3,8 +3,12 @@
 {% block title %}Film index{% endblock %}
 
 {% block body %}
-    <h1>Film index</h1>
+    <h1>Admin films</h1>
 
+    <h2>Filtre de recherche</h2>
+    {{ form(formRecherche) }}
+
+    <h2>Resultats trouvés</h2>
     <table class="table">
         <thead>
             <tr>

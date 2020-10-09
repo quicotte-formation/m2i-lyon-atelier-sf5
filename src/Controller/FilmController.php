@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\DTO\RechercheFilmSerieAdminDTO;
 use App\Entity\Film;
 use App\Form\FilmType;
+use App\Form\RechercheFilmSerieAdminType;
 use App\Repository\FilmRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,12 +18,24 @@ use Symfony\Component\Routing\Annotation\Route;
 class FilmController extends AbstractController
 {
     /**
-     * @Route("/", name="film_index", methods={"GET"})
+     * @Route("/", name="film_index", methods={"GET", "POST"})
      */
-    public function index(FilmRepository $filmRepository): Response
+    public function index(FilmRepository $filmRepository, Request $request): Response
     {
+        $dto = new RechercheFilmSerieAdminDTO();
+        $form = $this->createForm( RechercheFilmSerieAdminType::class, $dto );
+        $form->handleRequest( $request );
+
+
+        if( $form->isSubmitted() ){
+            $films = $filmRepository->rechercherParTitreGenrePays( $dto->getTitre(), $dto->getGenre(), $dto->getPays() );
+        }else{
+            $films = $filmRepository->findAll();
+        }
+
         return $this->render('film/index.html.twig', [
-            'films' => $filmRepository->findAll(),
+            'films' => $films,
+            'formRecherche'=>$form->createView()
         ]);
     }
 
